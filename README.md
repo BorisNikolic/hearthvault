@@ -12,9 +12,9 @@ One line, no manual cloning:
 curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/install.sh | bash
 ```
 
-The installer asks for your vault's name — type `Brain`, `MyBrain`, whatever you like (or a full path) — then does everything:
+The installer asks two questions — your vault's name (`Brain`, `MyBrain`, or a full path) and your first project/client folder's name — then does everything:
 
-1. creates the vault as a git repo (from the template),
+1. creates the vault as a git repo, with your project folder already named,
 2. installs the three hooks and the `/vault-cleanup` command,
 3. registers the hooks in `~/.claude/settings.json` (idempotent, with a backup),
 4. **asks to schedule the weekly janitor** (macOS launchd, Mondays 08:07) — answer `y` and it installs and loads the schedule itself, no manual `launchctl` step. Skip it and you can still run `/vault-cleanup` by hand anytime.
@@ -23,12 +23,20 @@ Non-interactive / from a clone:
 
 ```bash
 git clone https://github.com/BorisNikolic/hearthvault.git && cd hearthvault
-./install.sh MyBrain        # creates ~/MyBrain
+./install.sh MyBrain Acme   # creates ~/MyBrain with an Acme/ project folder
 ```
 
 Requirements: [Claude Code](https://claude.com/claude-code), `git`, `jq`. The launchd schedule is macOS-only (hooks are portable; use cron/systemd elsewhere).
 
-After install: rename `Client/` inside the vault to your project's name, then start a Claude Code session in the vault — the hot cache loads automatically. Settings live in `~/.config/hearthvault/config` (vault path, extra work dirs that receive context, freshness window).
+After install: start a Claude Code session in the vault — the hot cache loads automatically. Settings live in `~/.config/hearthvault/config` (vault path, extra work dirs that receive context, freshness window).
+
+**Uninstall** (removes hooks, command, schedule, config — **never your notes**):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/uninstall.sh | bash
+```
+
+Your vault and its full git history stay on disk untouched; delete that folder yourself if you truly want the data gone.
 
 **Obsidian is optional.** The mechanism is plain markdown, shell hooks, and git — the agent reads and greps files directly, and `[[wikilinks]]` are just a linking convention it follows. Opening the vault in [Obsidian](https://obsidian.md) gives *you* a nice human interface (graph view, backlinks, search), but nothing breaks without it. No plugins required either way.
 

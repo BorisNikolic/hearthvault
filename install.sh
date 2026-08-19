@@ -70,8 +70,20 @@ fi
 # --- 2. Vault skeleton -------------------------------------------------------
 if [ ! -d "$VAULT" ]; then
   cp -R "$REPO_DIR/vault-template" "$VAULT"
+  # Name the first project/client folder (replaces the Client/ placeholder)
+  PROJECT="${2:-$(ask "Name of your first project/client folder:" "Client")}"
+  PROJECT=$(printf '%s' "$PROJECT" | tr -d '/')
+  if [ -n "$PROJECT" ] && [ "$PROJECT" != "Client" ]; then
+    # Drop the rename instructions while they still say "Client", then substitute
+    perl -pi -e 's/Rename `Client\/`[^.]*\. //' "$VAULT/CLAUDE.md"
+    perl -ni -e 'print unless /^\(Rename this folder/' "$VAULT/Client/Client.md"
+    mv "$VAULT/Client" "$VAULT/$PROJECT"
+    mv "$VAULT/$PROJECT/Client.md" "$VAULT/$PROJECT/$PROJECT.md"
+    PROJECT="$PROJECT" perl -pi -e 's/\bClient\b/$ENV{PROJECT}/g' \
+      "$VAULT/CLAUDE.md" "$VAULT/$PROJECT/$PROJECT.md"
+  fi
   ( cd "$VAULT" && git init -q && git add -A && git commit -qm "vault: initial skeleton" )
-  echo "created vault at $VAULT (git initialized)"
+  echo "created vault at $VAULT (git initialized, project folder: ${PROJECT:-Client})"
 else
   echo "kept existing vault at $VAULT (not touched)"
 fi
@@ -123,7 +135,7 @@ fi
 
 # --- 5. Optional weekly janitor (macOS launchd) --------------------------------
 if [ "$(uname)" = "Darwin" ]; then
-  yn=$(ask "Schedule the weekly janitor (Mondays 08:07)? y/N:" "n")
+  yn=$(ask "Schedule the weekly janitor (Mondays 08:07)? y/n:" "n")
   if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
     PLIST="$HOME/Library/LaunchAgents/com.hearthvault.janitor.plist"
     sed -e "s|__VAULT__|$VAULT|g" -e "s|__HOME__|$HOME|g" \
@@ -137,6 +149,6 @@ if [ "$(uname)" = "Darwin" ]; then
 fi
 
 echo
-echo "Done. Next steps:"
-echo "  1. Rename $VAULT/Client/ (folder + Client.md) to your project's name."
-echo "  2. Start a Claude Code session inside $VAULT — the hot cache loads automatically."
+echo "Done. Start a Claude Code session inside $VAULT — the hot cache loads automatically."
+[ -d "$VAULT/Client" ] && echo "(Tip: rename $VAULT/Client/ — folder + Client.md — to your project's name.)"
+exit 0
