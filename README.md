@@ -76,7 +76,7 @@ Relations between notes are a **small typed graph in frontmatter** (`owner`, `bl
 
 Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pasted email. The next session picks it up: the agent reads each file, extracts decisions into `Decisions/`, facts into the right topic notes, moves the raw file to `Inbox/Processed/`, and refreshes the hot cache.
 
-**Important: only sessions started *inside the vault folder* trigger Inbox processing.** Sessions in your work dirs deliberately don't — they're for coding, and shouldn't get derailed into filing meeting notes. So the flow is: drop the file in, and either `cd` into the vault and start a session (any prompt works, even just "process the inbox"), or let the weekly janitor sweep up whatever's left. Nothing watches the folder in real time. The agent is told to verify claims against reality before filing them (transcripts lie).
+**Important: only sessions started *inside the vault folder* trigger Inbox processing.** Sessions in your work dirs deliberately don't — they're for coding, and shouldn't get derailed into filing meeting notes. So the flow is: drop the file in, `cd` into the vault, start a session and send a message — processing begins with your first message, not with the session launch itself (the hook only injects context; the agent acts when you prompt it). "Process the inbox" is plenty. Or just let the weekly janitor sweep up whatever's left. Nothing watches the folder in real time. The agent is told to verify claims against reality before filing them (transcripts lie).
 
 ## 🔧 Details worth knowing
 
