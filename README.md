@@ -76,6 +76,15 @@ Relations between notes are a **small typed graph in frontmatter** (`owner`, `bl
 
 Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pasted email. The SessionStart hook flags unprocessed files, so the next Claude Code session you start in the vault picks them up: it reads each file, extracts decisions into `Decisions/`, facts into the right topic notes, moves the raw file to `Inbox/Processed/`, and refreshes the hot cache. The weekly janitor does the same for anything left over. So processing isn't instant — nothing watches the folder — it happens at the start of your next vault session, which in practice is exactly when you'd want to talk about that meeting anyway. The agent is told to verify claims against reality before filing them (transcripts lie).
 
+## 🔧 Details worth knowing
+
+- **Your code repos get the memory too.** Any session started under a directory listed in `WORK_DIRS` (default `~/WORK`, edit in `~/.config/hearthvault/config`) receives the hot tier — you don't have to work inside the vault for the agent to remember your project.
+- **Memory survives `/clear` and context compaction.** The injection hook fires on startup, resume, `/clear` and compaction, so a long session that compacts comes back with the hot tier fresh.
+- **The third hook is a nag, on purpose.** If a session changes a vault note but doesn't refresh the matching cache, a Stop hook reminds it before the turn ends — that's what keeps the hot tier trustworthy.
+- **Skipped caches are still discoverable.** The injection ends with one line naming the `Now/` caches it left out (idle > 14 days), so the agent knows they exist and can Read them.
+- **`Now/_general.md`** is the cache for active work not tied to a single topic.
+- **The janitor leaves a paper trail**: a summary in the vault's `.janitor-report.md` after every run, and the scheduled runs log to `~/.claude/logs/hearthvault-janitor.log`.
+
 ## 🧭 Principles
 
 - The injected tier is a **cache with a budget**, not a journal.
