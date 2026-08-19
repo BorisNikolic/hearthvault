@@ -72,6 +72,10 @@ The **session** writes only to its own topic's cache (parallel sessions never co
 
 Relations between notes are a **small typed graph in frontmatter** (`owner`, `blocks`, `blocked_by`, `supersedes`, `covers`, `decided_by`, `relates_to`) — greppable, queryable, no graph database.
 
+### 📥 The Inbox
+
+Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pasted email. The SessionStart hook flags unprocessed files, so the next Claude Code session you start in the vault picks them up: it reads each file, extracts decisions into `Decisions/`, facts into the right topic notes, moves the raw file to `Inbox/Processed/`, and refreshes the hot cache. The weekly janitor does the same for anything left over. So processing isn't instant — nothing watches the folder — it happens at the start of your next vault session, which in practice is exactly when you'd want to talk about that meeting anyway. The agent is told to verify claims against reality before filing them (transcripts lie).
+
 ## 🧭 Principles
 
 - The injected tier is a **cache with a budget**, not a journal.
