@@ -74,7 +74,9 @@ Relations between notes are a **small typed graph in frontmatter** (`owner`, `bl
 
 ### 📥 The Inbox
 
-Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pasted email. The SessionStart hook flags unprocessed files, so the next Claude Code session you start in the vault picks them up: it reads each file, extracts decisions into `Decisions/`, facts into the right topic notes, moves the raw file to `Inbox/Processed/`, and refreshes the hot cache. The weekly janitor does the same for anything left over. So processing isn't instant — nothing watches the folder — it happens at the start of your next vault session, which in practice is exactly when you'd want to talk about that meeting anyway. The agent is told to verify claims against reality before filing them (transcripts lie).
+Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pasted email. The next session picks it up: the agent reads each file, extracts decisions into `Decisions/`, facts into the right topic notes, moves the raw file to `Inbox/Processed/`, and refreshes the hot cache.
+
+**Important: only sessions started *inside the vault folder* trigger Inbox processing.** Sessions in your work dirs deliberately don't — they're for coding, and shouldn't get derailed into filing meeting notes. So the flow is: drop the file in, and either `cd` into the vault and start a session (any prompt works, even just "process the inbox"), or let the weekly janitor sweep up whatever's left. Nothing watches the folder in real time. The agent is told to verify claims against reality before filing them (transcripts lie).
 
 ## 🔧 Details worth knowing
 
