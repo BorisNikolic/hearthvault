@@ -1,8 +1,12 @@
 # HearthVault
 
+<!-- hero image: save the generated banner as docs/hero.png, then replace this comment with:
+<p align="center"><img src="docs/hero.png" alt="HearthVault — a brain of glowing embers in a hearth" width="720"></p>
+-->
+
 **Tiered markdown memory for Claude Code.** An Obsidian-compatible vault your agent maintains for you: a small hot tier injected at every session start, deeper tiers read on demand, and a weekly janitor that keeps the hot tier from growing. No database, no embeddings — markdown, git, three hooks, one scheduled agent.
 
-## Install
+## 🚀 Install
 
 One line, no manual cloning:
 
@@ -25,7 +29,7 @@ After install: rename `Client/` inside the vault to your project's name, then st
 
 **Obsidian is optional.** The mechanism is plain markdown, shell hooks, and git — the agent reads and greps files directly, and `[[wikilinks]]` are just a linking convention it follows. Opening the vault in [Obsidian](https://obsidian.md) gives *you* a nice human interface (graph view, backlinks, search), but nothing breaks without it. No plugins required either way.
 
-## How it works
+## 🔥 How it works
 
 Sessions are ephemeral; the vault remembers. Content settles downward through three tiers, so the always-injected part stays a few thousand tokens forever:
 
@@ -49,15 +53,15 @@ flowchart LR
 
 | Tier | Contents | In context |
 |---|---|---|
-| **Hot** | `Now.md` index (≤10 KB) + `Now/<topic>.md` caches touched in the last 14 days (~5 KB each) | injected at every session start |
-| **Warm** | `Tasks/` (durable record per ticket), `Decisions/`, `People/` (profiles of collaborators) | agent Reads via wikilinks when relevant |
-| **Cold** | `Now/Done/` archive, processed transcripts, full git history | never — nothing is deleted, it settles here |
+| **🔥 Hot** | `Now.md` index (≤10 KB) + `Now/<topic>.md` caches touched in the last 14 days (~5 KB each) | injected at every session start |
+| **🪵 Warm** | `Tasks/` (durable record per ticket), `Decisions/`, `People/` (profiles of collaborators) | agent Reads via wikilinks when relevant |
+| **🧊 Cold** | `Now/Done/` archive, processed transcripts, full git history | never — nothing is deleted, it settles here |
 
 The **session** writes only to its own topic's cache (parallel sessions never collide), overwrites instead of appending, and every edit auto-commits — git is the undo. The **janitor** (`/vault-cleanup`, weekly or manual) archives finished topics, compresses over-budget caches, files decisions verbatim, refreshes indexes, and validates links.
 
 Relations between notes are a **small typed graph in frontmatter** (`owner`, `blocks`, `blocked_by`, `supersedes`, `covers`, `decided_by`, `relates_to`) — greppable, queryable, no graph database.
 
-## Principles
+## 🧭 Principles
 
 - The injected tier is a **cache with a budget**, not a journal.
 - **Overwrite, don't append** — history lives in git; "Prior:" chains cap at 3.
@@ -66,6 +70,6 @@ Relations between notes are a **small typed graph in frontmatter** (`owner`, `bl
 - **One vault per client** — confidentiality isolation is structural, not disciplinary.
 - **Discipline decays; schedules don't** — every rule is enforced by the janitor.
 
-## License
+## 📄 License
 
 MIT
