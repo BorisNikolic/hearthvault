@@ -115,9 +115,12 @@ for f in vault-context.sh vault-autocommit.sh vault-stale-check.sh; do
   cp "$REPO_DIR/hooks/$f" "$CLAUDE_DIR/hooks/$f"
   chmod +x "$CLAUDE_DIR/hooks/$f"
 done
-[ -f "$CLAUDE_DIR/commands/vault-cleanup.md" ] && cp "$CLAUDE_DIR/commands/vault-cleanup.md" "$CLAUDE_DIR/commands/vault-cleanup.md.bak"
-cp "$REPO_DIR/commands/vault-cleanup.md" "$CLAUDE_DIR/commands/vault-cleanup.md"
-echo "installed hooks + /vault-cleanup command into $CLAUDE_DIR"
+for c in "$REPO_DIR"/commands/*.md; do
+  base=$(basename "$c")
+  [ -f "$CLAUDE_DIR/commands/$base" ] && cp "$CLAUDE_DIR/commands/$base" "$CLAUDE_DIR/commands/$base.bak"
+  cp "$c" "$CLAUDE_DIR/commands/$base"
+done
+echo "installed hooks + commands (/vault-cleanup, /vault-save) into $CLAUDE_DIR"
 
 # --- 4. Register hooks in ~/.claude/settings.json ------------------------------
 SETTINGS="$CLAUDE_DIR/settings.json"

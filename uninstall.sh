@@ -21,8 +21,9 @@ fi
 
 # 2. Hooks + command
 rm -f "$CLAUDE_DIR/hooks/vault-context.sh" "$CLAUDE_DIR/hooks/vault-autocommit.sh" \
-      "$CLAUDE_DIR/hooks/vault-stale-check.sh" "$CLAUDE_DIR/commands/vault-cleanup.md"
-echo "removed hooks and /vault-cleanup command"
+      "$CLAUDE_DIR/hooks/vault-stale-check.sh" \
+      "$CLAUDE_DIR/commands/vault-cleanup.md" "$CLAUDE_DIR/commands/vault-save.md"
+echo "removed hooks and the /vault-cleanup and /vault-save commands"
 
 # 3. Deregister from settings.json (keep everything that isn't ours)
 SETTINGS="$CLAUDE_DIR/settings.json"

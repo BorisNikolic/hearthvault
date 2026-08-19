@@ -15,7 +15,7 @@ curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/insta
 The installer asks three questions — your vault's name (`Brain`, `MyBrain`, or a full path), your first project/client folder's name, and where you keep the projects this vault should cover — then does everything:
 
 1. creates the vault as a git repo, with your project folder already named,
-2. installs the three hooks and the `/vault-cleanup` command,
+2. installs the three hooks and two commands (`/vault-cleanup`, `/vault-save`),
 3. registers the hooks in `~/.claude/settings.json` (idempotent, with a backup),
 4. **asks to schedule the weekly janitor** (macOS launchd, Mondays 08:07) — answer `y` and it installs and loads the schedule itself, no manual `launchctl` step. Skip it and you can still run `/vault-cleanup` by hand anytime.
 
@@ -85,6 +85,7 @@ Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pas
 - **The third hook is a nag, on purpose.** If a session changes a vault note but doesn't refresh the matching cache, a Stop hook reminds it before the turn ends — that's what keeps the hot tier trustworthy.
 - **Skipped caches are still discoverable.** The injection ends with one line naming the `Now/` caches it left out (idle > 14 days), so the agent knows they exist and can Read them.
 - **`Now/_general.md`** is the cache for active work not tied to a single topic.
+- **`/vault-save` files a conversation on demand.** Sessions maintain the vault as a side effect anyway, but when you want something captured explicitly, `/vault-save` analyzes the conversation and files the durable parts; `/vault-save decision <name>` creates a decision note, `/vault-save session` appends a session summary to the topic's task note.
 - **The janitor leaves a paper trail**: a summary in the vault's `.janitor-report.md` after every run, and the scheduled runs log to `~/.claude/logs/hearthvault-janitor.log`.
 
 ## 🧭 Principles
