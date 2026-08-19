@@ -1,8 +1,6 @@
 # HearthVault
 
-<!-- hero image: save the generated banner as docs/hero.png, then replace this comment with:
-<p align="center"><img src="docs/hero.png" alt="HearthVault — a brain of glowing embers in a hearth" width="720"></p>
--->
+<p align="center"><img src="docs/hero.png" alt="HearthVault — a brain of glowing embers inside a stone hearth" width="720"></p>
 
 **Tiered markdown memory for Claude Code.** An Obsidian-compatible vault your agent maintains for you: a small hot tier injected at every session start, deeper tiers read on demand, and a weekly janitor that keeps the hot tier from growing. No database, no embeddings — markdown, git, three hooks, one scheduled agent.
 
@@ -14,7 +12,12 @@ One line, no manual cloning:
 curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/install.sh | bash
 ```
 
-The installer asks for your vault's name — type `Brain`, `MyBrain`, whatever you like (or a full path) — then creates the vault as a git repo, installs the hooks and the `/vault-cleanup` command, registers the hooks in `~/.claude/settings.json` (with a backup), and offers to schedule the weekly janitor.
+The installer asks for your vault's name — type `Brain`, `MyBrain`, whatever you like (or a full path) — then does everything:
+
+1. creates the vault as a git repo (from the template),
+2. installs the three hooks and the `/vault-cleanup` command,
+3. registers the hooks in `~/.claude/settings.json` (idempotent, with a backup),
+4. **asks to schedule the weekly janitor** (macOS launchd, Mondays 08:07) — answer `y` and it installs and loads the schedule itself, no manual `launchctl` step. Skip it and you can still run `/vault-cleanup` by hand anytime.
 
 Non-interactive / from a clone:
 
