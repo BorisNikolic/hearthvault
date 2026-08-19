@@ -75,22 +75,35 @@ else
 fi
 
 # --- 2. Vault skeleton -------------------------------------------------------
+PROJECT_ARG="${2:-}"
+RENAMED_TO=""
+rename_project() { # replaces the Client/ placeholder in the vault at $1
+  local proj
+  proj="${PROJECT_ARG:-$(ask "Name of your project/client folder:" "Client")}"
+  proj=$(printf '%s' "$proj" | tr -d '/')
+  { [ -n "$proj" ] && [ "$proj" != "Client" ]; } || return 0
+  # Drop the rename instructions while they still say "Client", then substitute
+  perl -pi -e 's/Rename `Client\/`[^.]*\. //' "$1/CLAUDE.md"
+  perl -ni -e 'print unless /^\(Rename this folder/' "$1/Client/Client.md"
+  mv "$1/Client" "$1/$proj"
+  mv "$1/$proj/Client.md" "$1/$proj/$proj.md"
+  PROJECT="$proj" perl -pi -e 's/\bClient\b/$ENV{PROJECT}/g' \
+    "$1/CLAUDE.md" "$1/$proj/$proj.md"
+  RENAMED_TO="$proj"
+}
+
 if [ ! -d "$VAULT" ]; then
   cp -R "$REPO_DIR/vault-template" "$VAULT"
-  # Name the first project/client folder (replaces the Client/ placeholder)
-  PROJECT="${2:-$(ask "Name of your first project/client folder:" "Client")}"
-  PROJECT=$(printf '%s' "$PROJECT" | tr -d '/')
-  if [ -n "$PROJECT" ] && [ "$PROJECT" != "Client" ]; then
-    # Drop the rename instructions while they still say "Client", then substitute
-    perl -pi -e 's/Rename `Client\/`[^.]*\. //' "$VAULT/CLAUDE.md"
-    perl -ni -e 'print unless /^\(Rename this folder/' "$VAULT/Client/Client.md"
-    mv "$VAULT/Client" "$VAULT/$PROJECT"
-    mv "$VAULT/$PROJECT/Client.md" "$VAULT/$PROJECT/$PROJECT.md"
-    PROJECT="$PROJECT" perl -pi -e 's/\bClient\b/$ENV{PROJECT}/g' \
-      "$VAULT/CLAUDE.md" "$VAULT/$PROJECT/$PROJECT.md"
-  fi
+  rename_project "$VAULT"
   ( cd "$VAULT" && git init -q && git add -A && git commit -qm "vault: initial skeleton" )
-  echo "created vault at $VAULT (git initialized, project folder: ${PROJECT:-Client})"
+  echo "created vault at $VAULT (git initialized, project folder: ${RENAMED_TO:-Client})"
+elif [ -d "$VAULT/Client" ]; then
+  echo "existing vault at $VAULT still has the Client/ placeholder"
+  rename_project "$VAULT"
+  if [ -n "$RENAMED_TO" ]; then
+    [ -d "$VAULT/.git" ] && ( cd "$VAULT" && git add -A && git commit -qm "vault: rename Client/ to $RENAMED_TO/" >/dev/null 2>&1 || true )
+    echo "renamed Client/ to $RENAMED_TO/ (notes untouched)"
+  fi
 else
   echo "kept existing vault at $VAULT (not touched)"
 fi
