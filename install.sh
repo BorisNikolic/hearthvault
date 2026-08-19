@@ -32,7 +32,7 @@ ask() { # ask <prompt> <default>
   local answer=""
   if [ -t 0 ]; then
     printf '%s [%s] ' "$1" "$2"; read -r answer
-  elif [ -e /dev/tty ]; then
+  elif ( : < /dev/tty ) 2>/dev/null; then
     printf '%s [%s] ' "$1" "$2" > /dev/tty; read -r answer < /dev/tty
   fi
   printf '%s' "${answer:-$2}"

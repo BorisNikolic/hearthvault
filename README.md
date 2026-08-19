@@ -23,6 +23,8 @@ Requirements: [Claude Code](https://claude.com/claude-code), `git`, `jq`. The la
 
 After install: rename `Client/` inside the vault to your project's name, then start a Claude Code session in the vault — the hot cache loads automatically. Settings live in `~/.config/hearthvault/config` (vault path, extra work dirs that receive context, freshness window).
 
+**Obsidian is optional.** The mechanism is plain markdown, shell hooks, and git — the agent reads and greps files directly, and `[[wikilinks]]` are just a linking convention it follows. Opening the vault in [Obsidian](https://obsidian.md) gives *you* a nice human interface (graph view, backlinks, search), but nothing breaks without it. No plugins required either way.
+
 ## How it works
 
 Sessions are ephemeral; the vault remembers. Content settles downward through three tiers, so the always-injected part stays a few thousand tokens forever:
