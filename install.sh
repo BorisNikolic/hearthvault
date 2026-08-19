@@ -171,8 +171,27 @@ if [ "$(uname)" = "Darwin" ]; then
   fi
 fi
 
-# Show effective settings — the config may pre-date this run
+# --- 6. Smoke test: does the injection hook actually fire? --------------------
+# (config may pre-date this run, so source the effective one)
 . "$CONFIG_DIR/config"
+smoke() { ( cd "$1" 2>/dev/null && printf '{}' | bash "$CLAUDE_DIR/hooks/vault-context.sh" | wc -c | tr -d ' ' ); }
+echo
+V_BYTES=$(smoke "$VAULT" || echo 0)
+if [ "${V_BYTES:-0}" -gt 100 ]; then
+  echo "smoke test: hook injects from the vault (OK, ${V_BYTES} bytes)"
+else
+  echo "WARNING: the hook injected nothing from the vault — check VAULT in $CONFIG_DIR/config"
+fi
+FIRST_WD=$(printf '%s' "${WORK_DIRS:-}" | cut -d: -f1)
+if [ -n "$FIRST_WD" ] && [ -d "$FIRST_WD" ]; then
+  W_BYTES=$(smoke "$FIRST_WD" || echo 0)
+  if [ "${W_BYTES:-0}" -gt 100 ]; then
+    echo "smoke test: hook injects from $FIRST_WD (OK, ${W_BYTES} bytes)"
+  else
+    echo "WARNING: the hook injected nothing from $FIRST_WD — check WORK_DIRS in $CONFIG_DIR/config"
+  fi
+fi
+
 echo
 echo "Done. The hot cache loads automatically in any Claude Code session started in:"
 echo "  - the vault:        $VAULT"
