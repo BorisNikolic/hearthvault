@@ -12,7 +12,7 @@ One line, no manual cloning:
 curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/install.sh | bash
 ```
 
-The installer asks two questions — your vault's name (`Brain`, `MyBrain`, or a full path) and your first project/client folder's name — then does everything:
+The installer asks three questions — your vault's name (`Brain`, `MyBrain`, or a full path), your first project/client folder's name, and where you keep the projects this vault should cover — then does everything:
 
 1. creates the vault as a git repo, with your project folder already named,
 2. installs the three hooks and the `/vault-cleanup` command,
@@ -23,7 +23,7 @@ Non-interactive / from a clone:
 
 ```bash
 git clone https://github.com/BorisNikolic/hearthvault.git && cd hearthvault
-./install.sh MyBrain Acme   # creates ~/MyBrain with an Acme/ project folder
+./install.sh MyBrain Acme "$HOME/dev:$HOME/experiments"   # vault, project folder, work dirs
 ```
 
 Requirements: [Claude Code](https://claude.com/claude-code), `git`, `jq`. The launchd schedule is macOS-only (hooks are portable; use cron/systemd elsewhere).
@@ -78,7 +78,7 @@ Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pas
 
 ## 🔧 Details worth knowing
 
-- **Your code repos get the memory too.** Any session started under a directory listed in `WORK_DIRS` (default `~/WORK`, edit in `~/.config/hearthvault/config`) receives the hot tier — you don't have to work inside the vault for the agent to remember your project.
+- **Your code repos get the memory too.** The installer asks where you keep your projects; any session started under one of those directories receives the hot tier — you don't have to work inside the vault for the agent to remember your project. Add or change paths anytime in `~/.config/hearthvault/config` (`WORK_DIRS`, colon-separated).
 - **Memory survives `/clear` and context compaction.** The injection hook fires on startup, resume, `/clear` and compaction, so a long session that compacts comes back with the hot tier fresh.
 - **The third hook is a nag, on purpose.** If a session changes a vault note but doesn't refresh the matching cache, a Stop hook reminds it before the turn ends — that's what keeps the hot tier trustworthy.
 - **Skipped caches are still discoverable.** The injection ends with one line naming the `Now/` caches it left out (idle > 14 days), so the agent knows they exist and can Read them.

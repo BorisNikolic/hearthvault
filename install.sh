@@ -54,11 +54,18 @@ echo
 # --- 1. Config ---------------------------------------------------------------
 mkdir -p "$CONFIG_DIR"
 if [ ! -f "$CONFIG_DIR/config" ]; then
+  echo
+  echo "Sessions started under your project directories can receive the vault's"
+  echo "memory too (not just sessions inside the vault itself)."
+  WORK_INPUT="${3:-$(ask "Where do you keep those projects? (colon-separated paths, empty for none)" "$HOME/Projects")}"
+  # Make ~ and \$HOME survive into the sourced config
+  WORK_DIRS_VALUE=$(printf '%s' "$WORK_INPUT" | sed -e "s|^~|\$HOME|" -e "s|:~|:\$HOME|g" -e "s|$HOME|\$HOME|g")
   cat > "$CONFIG_DIR/config" <<EOF
 # HearthVault configuration (sourced by the hooks)
 VAULT="$VAULT"
-# Colon-separated extra directories whose sessions should receive vault context:
-WORK_DIRS="\$HOME/WORK"
+# Colon-separated directories whose sessions also receive vault context
+# (besides the vault itself). Example: WORK_DIRS="\$HOME/Projects:\$HOME/dev"
+WORK_DIRS="$WORK_DIRS_VALUE"
 # How many days a Now/ cache stays "hot" (injected at session start):
 FRESH_DAYS=14
 EOF
