@@ -155,7 +155,15 @@ if [ "$(uname)" = "Darwin" ]; then
   fi
 fi
 
+# Show effective settings — the config may pre-date this run
+. "$CONFIG_DIR/config"
 echo
-echo "Done. Start a Claude Code session inside $VAULT — the hot cache loads automatically."
-[ -d "$VAULT/Client" ] && echo "(Tip: rename $VAULT/Client/ — folder + Client.md — to your project's name.)"
+echo "Done. The hot cache loads automatically in any Claude Code session started in:"
+echo "  - the vault:        $VAULT"
+if [ -n "${WORK_DIRS:-}" ]; then
+  echo "  - your work dirs:   $WORK_DIRS (and anything under them)"
+else
+  echo "  (add project dirs via WORK_DIRS in $CONFIG_DIR/config to get it in your repos too)"
+fi
+[ -d "$VAULT/Client" ] && echo "Tip: rename $VAULT/Client/ (folder + Client.md) to your project's name."
 exit 0
