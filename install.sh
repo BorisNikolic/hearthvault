@@ -134,7 +134,7 @@ NEEDED=$(cat <<'EOF'
     { "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/vault-stale-check.sh" } ] }
   ],
   "PostToolUse": [
-    { "matcher": "Write|Edit",
+    { "matcher": "Write|Edit|Bash",
       "hooks": [ { "type": "command", "command": "bash ~/.claude/hooks/vault-autocommit.sh", "async": true } ] }
   ]
 }
@@ -145,6 +145,13 @@ if [ ! -f "$SETTINGS" ]; then
   echo "created $SETTINGS with the hook registration"
 elif jq -e '.hooks.SessionStart[]?.hooks[]?.command | select(contains("vault-context.sh"))' "$SETTINGS" >/dev/null 2>&1; then
   echo "hooks already registered in $SETTINGS"
+  # Migration: older installs matched only Write|Edit, missing shell-made edits
+  if jq -e '.hooks.PostToolUse[]? | select((.hooks[]?.command // "" | contains("vault-autocommit.sh")) and .matcher == "Write|Edit")' "$SETTINGS" >/dev/null 2>&1; then
+    cp "$SETTINGS" "$SETTINGS.bak"
+    jq '.hooks.PostToolUse |= map(if ((.hooks[]?.command // "" | contains("vault-autocommit.sh")) and .matcher == "Write|Edit") then .matcher = "Write|Edit|Bash" else . end)' \
+      "$SETTINGS.bak" > "$SETTINGS"
+    echo "updated auto-commit matcher to Write|Edit|Bash (agents editing via shell commands now auto-commit too)"
+  fi
 else
   cp "$SETTINGS" "$SETTINGS.bak"
   jq --argjson h "$NEEDED" '
