@@ -168,11 +168,24 @@ if [ "$(uname)" = "Darwin" ]; then
   yn=$(ask "Schedule the weekly janitor (Mondays 08:07)? y/n:" "n")
   if [ "$yn" = "y" ] || [ "$yn" = "Y" ]; then
     PLIST="$HOME/Library/LaunchAgents/com.hearthvault.janitor.plist"
-    sed -e "s|__VAULT__|$VAULT|g" -e "s|__HOME__|$HOME|g" \
-      "$REPO_DIR/launchd/com.hearthvault.janitor.plist" > "$PLIST"
-    launchctl bootout "gui/$(id -u)/com.hearthvault.janitor" 2>/dev/null || true
-    launchctl bootstrap "gui/$(id -u)" "$PLIST"
-    echo "janitor scheduled; log: ~/.claude/logs/hearthvault-janitor.log"
+    # launchd runs the job with a minimal PATH and a non-interactive shell, so
+    # ~/.zshrc never runs and a bare "claude" is not found. Bake in the path.
+    CLAUDE_BIN="$(command -v claude || true)"
+    if [ -z "$CLAUDE_BIN" ]; then
+      for c in "$HOME/.local/bin/claude" /opt/homebrew/bin/claude /usr/local/bin/claude; do
+        if [ -x "$c" ]; then CLAUDE_BIN="$c"; break; fi
+      done
+    fi
+    if [ -z "$CLAUDE_BIN" ]; then
+      echo "WARNING: the claude binary was not found, so the janitor was not scheduled."
+      echo "         Install Claude Code, then run this installer again."
+    else
+      sed -e "s|__VAULT__|$VAULT|g" -e "s|__HOME__|$HOME|g" -e "s|__CLAUDE__|$CLAUDE_BIN|g" \
+        "$REPO_DIR/launchd/com.hearthvault.janitor.plist" > "$PLIST"
+      launchctl bootout "gui/$(id -u)/com.hearthvault.janitor" 2>/dev/null || true
+      launchctl bootstrap "gui/$(id -u)" "$PLIST"
+      echo "janitor scheduled with $CLAUDE_BIN; log: ~/.claude/logs/hearthvault-janitor.log"
+    fi
   else
     echo "skipped; run /vault-cleanup manually anytime"
   fi
