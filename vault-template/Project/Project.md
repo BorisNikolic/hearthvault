@@ -3,9 +3,9 @@ tags: [work, moc]
 created: YYYY-MM-DD
 ---
 
-# Client — Hub
+# Project — Hub
 
-(Rename this folder and note to your project or client's name. One vault per client — never mix clients.)
+(Rename this folder and note to your project's name.)
 
 ## Context
 

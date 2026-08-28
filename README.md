@@ -12,7 +12,7 @@ One line, no manual cloning:
 curl -fsSL https://raw.githubusercontent.com/BorisNikolic/hearthvault/main/install.sh | bash
 ```
 
-The installer asks three questions — your vault's name (`Brain`, `MyBrain`, or a full path), your first project/client folder's name, and where you keep the projects this vault should cover — then does everything:
+The installer asks three questions — your vault's name (`Brain`, `MyBrain`, or a full path), your project folder's name, and where you keep the projects this vault should cover — then does everything:
 
 1. creates the vault as a git repo, with your project folder already named,
 2. installs the three hooks and two commands (`/vault-cleanup`, `/vault-save`),
@@ -94,7 +94,7 @@ Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pas
 - **Overwrite, don't append** — history lives in git; "Prior:" chains cap at 3.
 - **Decisions move intact, never summarized.**
 - **Nothing is deleted** — it settles down a tier.
-- **One vault per client** — confidentiality isolation is structural, not disciplinary.
+- **One vault per project** — isolation is structural, not disciplinary.
 - **Discipline decays; schedules don't** — every rule is enforced by the janitor.
 
 ## 📄 License

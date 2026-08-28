@@ -6,11 +6,11 @@ This vault is the persistent memory for my work. Claude maintains it. Plain Mark
 
 - `Now.md` — hot cache **index + cross-cutting** only (workstream list, cross-topic decisions, tooling). Keep it short; it's a cache, not a journal. Bump its `**Last updated:** YYYY-MM-DD HH:MM` line (time included, since notes land several times a day). **The "Prior:" chain holds max 3 entries** — new state overwrites old, history lives in the per-topic caches, task notes and git, never in this line. Target size ≤10KB.
 - `Now/<topic>.md` — **per-topic hot cache** (one per ticket/workstream, e.g. `Now/TICKET-123.md`). This is where active work goes. **Each session writes only the file for the topic it's working on** — this is what keeps parallel sessions from clobbering each other. Overwrite the file (don't append), keep it tight, and bump its `**Updated:** YYYY-MM-DD HH:MM` line. Use `Now/_general.md` for active work not tied to a topic. When a topic is fully done, move its cache to `Now/Done/` **in the same session that closes it** (don't delete — for many topics the cache is the only record), and update the `Now.md` index. Target ~5KB per cache; when one outgrows that, move narrative history into the topic's task note and keep only current state. **The SessionStart hook injects only caches touched in the last 14 days** — older ones stay indexed in `Now.md` and are one Read away, so nothing is lost by staying tight.
-- `Client/Client.md` — hub note (index). Rename `Client/` to your project or client's name. Keep its links current when adding/removing notes. One vault per client — never mix clients in one vault.
-- `Client/Tasks/` — one note per ticket: scope, decisions, log, open questions. Frontmatter: `status: in-progress|done`, `jira:`/`ticket:` link.
-- `Client/Decisions/` — one file per durable decision: `YYYY-MM-DD <slug>.md`. Body: **What** was decided, **Why**, **Who** (and where — meeting/DM/channel), **Supersedes** (link if it overrides an earlier decision). Small decisions that belong to a single topic go in that topic's note instead; use Decisions/ for anything cross-topic or likely to matter in 3 months.
-- `Client/People/` — one note per recurring person (teammates, QA, PM): role, standing agreements, review preferences, open threads. Update the person's note when an agreement is made or a preference shows up in a review — same discipline as decisions. Don't log routine activity there; it's a profile, not a journal.
-- `Client/Setup/` — machine/tooling notes.
+- `Project/Project.md` — hub note (index). Rename `Project/` to your project's name. Keep its links current when adding/removing notes. Keep one vault per project, so notes from separate projects never mix.
+- `Project/Tasks/` — one note per ticket: scope, decisions, log, open questions. Frontmatter: `status: in-progress|done`, `jira:`/`ticket:` link.
+- `Project/Decisions/` — one file per durable decision: `YYYY-MM-DD <slug>.md`. Body: **What** was decided, **Why**, **Who** (and where — meeting/DM/channel), **Supersedes** (link if it overrides an earlier decision). Small decisions that belong to a single topic go in that topic's note instead; use Decisions/ for anything cross-topic or likely to matter in 3 months.
+- `Project/People/` — one note per recurring person (teammates, QA, PM): role, standing agreements, review preferences, open threads. Update the person's note when an agreement is made or a preference shows up in a review — same discipline as decisions. Don't log routine activity there; it's a profile, not a journal.
+- `Project/Setup/` — machine/tooling notes.
 - `Inbox/` — drop zone for raw material (meeting transcripts, exports).
 
 ## Typed relations (frontmatter)
@@ -41,6 +41,6 @@ A scheduled job (launchd, Mondays) runs `claude -p "/vault-cleanup"` in this vau
 ## Style
 
 - Frontmatter on every note: `tags`, `created` (and `status`/ticket link for tasks).
-- Footer links: `Links: [[Client]] · [[related note]]`.
+- Footer links: `Links: [[Project]] · [[related note]]`.
 - Absolute dates always (2026-06-11, never "today").
 - Dense and factual; no filler. Update existing notes rather than creating near-duplicates.
