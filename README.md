@@ -64,7 +64,7 @@ flowchart LR
 
 | Tier | Contents | In context |
 |---|---|---|
-| **🔥 Hot** | `Now.md` index (≤10 KB) + `Now/<topic>.md` caches touched in the last 14 days (~5 KB each) | injected at every session start |
+| **🔥 Hot** | the current branch's `Now/<topic>.md` cache (~5 KB) + the `Now.md` index sections, trimmed to fit Claude Code's 10K hook limit | injected at every session start |
 | **🪵 Warm** | `Tasks/` (durable record per ticket), `Decisions/`, `People/` (profiles of collaborators) | agent Reads via wikilinks when relevant |
 | **🧊 Cold** | `Now/Done/` archive, processed transcripts, full git history | never — nothing is deleted, it settles here |
 
@@ -83,7 +83,7 @@ Drop raw material into `Inbox/` — a meeting transcript, an exported doc, a pas
 - **Your code repos get the memory too.** The installer asks where you keep your projects; any session started under one of those directories receives the hot tier — you don't have to work inside the vault for the agent to remember your project. Add or change paths anytime in `~/.config/hearthvault/config` (`WORK_DIRS`, colon-separated).
 - **Memory survives `/clear` and context compaction.** The injection hook fires on startup, resume, `/clear` and compaction, so a long session that compacts comes back with the hot tier fresh.
 - **The third hook is a nag, on purpose.** If a session changes a vault note but doesn't refresh the matching cache, a Stop hook reminds it before the turn ends — that's what keeps the hot tier trustworthy.
-- **Skipped caches are still discoverable.** The injection ends with one line naming the `Now/` caches it left out (idle > 14 days), so the agent knows they exist and can Read them.
+- **The injection fits the hook limit.** Claude Code passes hook output over 10,000 characters to the agent only as a 2,000-character preview. The hook fills a 9.7K budget (counted in UTF-16 units, as Claude Code counts) in priority order: the cache for the current git branch (name topic caches after the ticket ID, `Now/PROJ-123.md`, and branches like `feature/PROJ-123-…`), then `Now.md`'s Last-updated line, Active workstreams and Cross-cutting. Whatever doesn't fit is cut with a pointer, and the output always ends with the paths of every other cache and a `Not injected:` line, so the agent knows what to Read.
 - **`Now/_general.md`** is the cache for active work not tied to a single topic.
 - **`/vault-save` files a conversation on demand.** Sessions maintain the vault as a side effect anyway, but when you want something captured explicitly, `/vault-save` analyzes the conversation and files the durable parts; `/vault-save decision <name>` creates a decision note, `/vault-save session` appends a session summary to the topic's task note.
 - **The janitor leaves a paper trail**: a summary in the vault's `.janitor-report.md` after every run, and the scheduled runs log to `~/.claude/logs/hearthvault-janitor.log`.

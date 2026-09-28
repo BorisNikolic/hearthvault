@@ -66,8 +66,6 @@ VAULT="$VAULT"
 # Colon-separated directories whose sessions also receive vault context
 # (besides the vault itself). Example: WORK_DIRS="\$HOME/Projects:\$HOME/dev"
 WORK_DIRS="$WORK_DIRS_VALUE"
-# How many days a Now/ cache stays "hot" (injected at session start):
-FRESH_DAYS=14
 EOF
   echo "wrote $CONFIG_DIR/config"
 else
